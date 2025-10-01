@@ -1,0 +1,557 @@
+/* =================== style.css (موسع مع الأنيميشن و Avatar picker) =================== */
+
+/* --- متغيرات وأساسيات --- */
+:root {
+  --bg-img: url("https://i.postimg.cc/Fzvtrr8T/0983f011e33a0e7eba10304581983535.jpg");
+  --panel-bg: rgba(255, 255, 255, 0.75);
+  --accent1: #ff4976;
+  --accent2: #ff7a2e;
+  --muted: #333;
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --success: #2e7d32;
+  --danger: #c62828;
+  --max-width: 1200px;
+  --radius: 12px;
+}
+
+/* Reset & base */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  color: #222;
+  direction: rtl;
+  background: var(--bg-img) center/cover fixed no-repeat;
+  font-size: 18px;
+}
+/* خلي شاشة الدخول في النص */
+
+#auth-screen {
+  display: flex;
+  justify-content: center; /* يوسّط أفقياً */
+  align-items: center; /* يوسّط عمودياً */
+  min-height: 100vh; /* عشان ياخد طول الشاشة */
+}
+
+/* Screens */
+.screen {
+  display: block;
+  min-height: 100vh;
+  padding: 12px;
+}
+.hidden {
+  display: none !important;
+}
+
+/* Buttons / Inputs */
+button {
+  cursor: pointer;
+  border: none;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+input,
+select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.95);
+  color: #111;
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+/* Panels */
+.panel {
+  background: var(--panel-bg);
+  padding: 18px;
+  border-radius: var(--radius);
+}
+
+/* Auth box */
+
+.auth-box {
+  width: 380px;
+  max-width: calc(100% - 40px);
+  text-align: center;
+  padding: 28px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.3);
+  border: 3px solid rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+}
+.auth-box h1 {
+  margin: 6px 0 12px 0;
+  font-size: 24px;
+  color: #111;
+}
+.register-link {
+  display: block;
+  margin-top: 12px;
+  color: #007bff;
+  cursor: pointer;
+}
+
+/* animation for auth boxes (fade+slide) */
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.auth-box.animate-in {
+  animation: fadeSlideIn 0.44s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+
+/* ================= USER HOME ================= */
+#user-home {
+  display: flex;
+  gap: 18px;
+  max-width: var(--max-width);
+  margin: 18px auto;
+  align-items: flex-start;
+  padding-bottom: 40px;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  min-width: 200px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.3);
+  border: 3px solid rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+
+  transform: translateX(-20px);
+  opacity: 0;
+}
+.coins-display {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: goldenrod;
+}
+
+.sidebar.slide-in {
+  animation: sidebarSlideIn 0.42s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+@keyframes sidebarSlideIn {
+  0% {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.profile-pic {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(0, 0, 0, 0.08);
+  background: #eee;
+}
+.sidebar h3 {
+  margin: 6px 0 10px 0;
+  font-size: 20px;
+  color: #222;
+  font-weight: bold;
+  text-align: center;
+}
+
+.side-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.75);
+  color: #111;
+  font-size: 16px;
+  font-weight: bold;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+}
+.side-btn .icon {
+  font-size: 20px;
+  width: 26px;
+  display: inline-block;
+  text-align: center;
+}
+.side-btn:hover {
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  color: #fff;
+  transform: translateY(-3px);
+}
+
+.badges-panel {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 8px 0;
+}
+.badge-chip {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 6px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: #111;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Content */
+.content {
+  flex: 1;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 8px;
+  text-align: center;
+}
+#stage-title {
+  font-size: 24px;
+  color: #111;
+  font-weight: bold;
+  margin-top: 10px;
+}
+#stage-details {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 10px;
+  padding: 12px;
+}
+/* متجر المستخدم */
+.shop-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.shop-item {
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  width: 140px;
+}
+
+.shop-item img {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+/* ================= QUIZ ================= */
+# quiz-screen {
+  max-width: var(--max-width);
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+#timer,
+#score-counter {
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #111;
+  font-weight: 700;
+  font-size: 18px;
+}
+#question-text {
+  background: rgba(255, 255, 255, 0.85);
+  color: #111;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* options */
+.options-grid {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.options-grid button {
+  background: rgba(255, 255, 255, 0.9);
+  color: #111;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+.options-grid button.correct {
+  background: linear-gradient(90deg, #2e7d32, #66bb6a);
+  color: #fff;
+  animation: pop 0.6s ease;
+}
+.options-grid button.wrong {
+  background: linear-gradient(90deg, #c62828, #ef5350);
+  color: #fff;
+  animation: shakeX 0.5s ease;
+}
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06) rotate(-1deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes shakeX {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+  75% {
+    transform: translateX(-6px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* ================= RESULT ================= */
+#result-screen {
+  max-width: var(--max-width);
+  margin: 20px auto;
+  padding: 20px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 12px;
+}
+#score-text,
+#badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.5);
+  color: #111;
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin: 8px 0;
+}
+#review .wrong-item {
+  background: rgba(255, 255, 255, 0.5);
+  color: #111;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  font-size: 18px;
+  padding: 8px;
+  margin: 8px 0;
+  border-radius: 8px;
+}
+
+/* ================= MY RESULTS ================= */
+#my-results-screen {
+  max-width: var(--max-width);
+  margin: 18px auto;
+  padding: 18px;
+}
+#myResultsTable {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.3);
+  border: 3px solid rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+}
+#myResultsTable th,
+#myResultsTable td {
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  text-align: right;
+  color: #111;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 12px;
+}
+
+/* ================= Avatar picker ================= */
+.avatar-picker {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+.avatar-picker img.avatar-option {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+.avatar-picker img.avatar-option:hover {
+  transform: translateY(-6px);
+}
+.avatar-picker img.avatar-option.selected {
+  border-color: var(--accent1);
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Profile screen tweaks */
+#profile-screen .auth-box {
+  width: 420px;
+}
+#profile-current-photo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* -------------------subadmin screen------------------ */
+
+#subadmin-home {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+}
+
+#subadmin-controls label {
+  display: block;
+  margin: 8px 0;
+}
+
+#subadmin-users .user-row,
+#subadmin-results .result-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.shop-items .shop-item img {
+  width: 80px;
+  height: 80px;
+}
+
+/* ================= ADMIN SCREEN ================= */
+#admin-home {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+}
+
+#admin-home .admin-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.admin-buttons {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.admin-buttons button {
+  margin: 6px;
+}
+
+.admin-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+}
+
+#subadmins-list .panel {
+  margin: 8px 0;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#admin-stage-list button {
+  margin: 6px;
+  padding: 10px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+#admin-stage-users table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+#admin-stage-users th,
+#admin-stage-users td {
+  padding: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 880px) {
+}

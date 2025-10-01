@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>تجربة 3</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="ar">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Kids Quiz App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<!-- mammoth (docx -> text) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.14/mammoth.browser.min.js"></script>
+<!-- pdf.js (لـ استخراج نص من pdf) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.13.216/pdf.min.js"></script>
+<!-- jsPDF (لإنشاء PDF للتصدير) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- SheetJS (xlsx) لو عايز إكسل -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<body>
+
+  <!-- شاشة تسجيل الدخول -->
+  <div id="auth-screen" class="screen">
+    <div class="auth-box" id="auth-box">
+      <h1>🎉 أهلاً بك 🎉</h1>
+      <input type="text" id="username" placeholder="اسم المستخدم">
+      <input type="password" id="password" placeholder="كلمة السر">
+      <button onclick="login()">🔑 تسجيل دخول</button>
+      <span class="register-link" onclick="openRegister()">ليس لدى حساب</span>
+    </div>
+  </div>
+
+  <!-- شاشة إنشاء حساب -->
+  <div id="register-screen" class="screen hidden">
+    <div class="auth-box" id="register-box">
+      <h1>📝 إنشاء حساب جديد</h1>
+
+      <div class="avatar-picker-wrap">
+        <label>اختر Avatar أو ارفع صورة (اختياري)</label>
+        <div class="avatar-picker" id="register-avatar-picker">
+          <!-- صور Avatar ستحمل عبر CSS/JS (dicebear) -->
+          <img class="avatar-option" data-url="https://api.dicebear.com/6.x/adventurer/png?seed=boy1&size=128" src="https://api.dicebear.com/6.x/adventurer/png?seed=boy1&size=64" alt="avatar1">
+          <img class="avatar-option" data-url="https://api.dicebear.com/6.x/adventurer/png?seed=girl1&size=128" src="https://api.dicebear.com/6.x/adventurer/png?seed=girl1&size=64" alt="avatar2">
+          <img class="avatar-option" data-url="https://api.dicebear.com/6.x/adventurer/png?seed=dog1&size=128" src="https://api.dicebear.com/6.x/adventurer/png?seed=dog1&size=64" alt="avatar3">
+          <img class="avatar-option" data-url="https://api.dicebear.com/6.x/adventurer/png?seed=cat1&size=128" src="https://api.dicebear.com/6.x/adventurer/png?seed=cat1&size=64" alt="avatar4">
+          <img class="avatar-option" data-url="https://api.dicebear.com/6.x/adventurer/png?seed=robot1&size=128" src="https://api.dicebear.com/6.x/adventurer/png?seed=robot1&size=64" alt="avatar5">
+        </div>
+        <input type="hidden" id="reg-avatar" value="">
+      </div>
+
+      <input type="text" id="reg-name" placeholder="👤 الاسم">
+      <input type="text" id="reg-phone" placeholder="📱 رقم المحمول">
+      <input type="date" id="reg-birth">
+      <input type="file" id="reg-photo" accept="image/*">
+      <input type="password" id="reg-pass" placeholder="🔑 كلمة السر">
+      <input type="password" id="reg-pass2" placeholder="🔑 تأكيد كلمة السر">
+
+      <select id="reg-stage">
+        <option value="">-- اختر المرحلة --</option>
+        <option value="مرحلة اولى وتانية">مرحلة اولى وتانية</option>
+        <option value="مرحلة ثالثة ورابعة">مرحلة ثالثة ورابعة</option>
+        <option value="مرحلة خامسة وسادسة">مرحلة خامسة وسادسة</option>
+        <option value="مرحلة إعدادى وثانوى">مرحلة إعدادى وثانوى</option>
+        <option value="مرحلة الراعى الصالح">مرحلة الراعى الصالح</option>
+      </select>
+
+      <div class="row">
+        <button onclick="register()">✅ إنشاء الحساب</button>
+        <button onclick="backToLogin()">↩️ رجوع</button>
+      </div>
+    </div>
+  </div>
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- شاشة المستخدم الرئيسية -->
+  <div id="user-home" class="screen hidden">
+    <aside class="sidebar" id="main-sidebar">
+      <img id="user-photo" class="profile-pic" src="" alt="صورة">
+      <div id="user-coins" class="coins-display">💰 0</div>
+
+      <h3 id="user-name"></h3>
+
+      <div id="badges" class="badges-panel" aria-hidden="false" title="شاراتك"></div>
+
+      <button class="side-btn" onclick="openProfile()"><span class="icon">👤</span> حسابى</button>
+      <button class="side-btn" onclick="openMyResults()"><span class="icon">📊</span> نتائجى</button>
+      <button class="side-btn" onclick="showUserShop()">🛒 المتجر</button>
+
+      <button class="side-btn" onclick="logout()"><span class="icon">🚪</span> تسجيل خروج</button>
+    </aside>
+
+    <main class="content">
+      <h2 id="stage-title"></h2>
+      <p id="stage-details"></p>
+      <button onclick="startQuiz()">🚀 جاهز للبدء</button>
+    </main>
+  </div>
+
+  <!-- شاشة حسابي -->
+  <div id="profile-screen" class="screen hidden">
+    <div class="auth-box" id="profile-box">
+      <h1>👤 حسابي</h1>
+      <img id="profile-current-photo" class="profile-pic" src="" alt="الصورة">
+      <div class="avatar-picker" id="profile-avatar-picker">
+
+        <img class="avatar-option" data-url="https://api.dicebear.com/6.x/adventurer/png?seed=boy1&size=128" src="https://api.dicebear.com/6.x/adventurer/png?seed=boy1&size=64" alt="avatar1">
+        <img class="avatar-option" data-url="https://api.dicebear.com/6.x/adventurer/png?seed=girl1&size=128" src="https://api.dicebear.com/6.x/adventurer/png?seed=girl1&size=64" alt="avatar2">
+        <img class="avatar-option" data-url="https://api.dicebear.com/6.x/adventurer/png?seed=dog1&size=128" src="https://api.dicebear.com/6.x/adventurer/png?seed=dog1&size=64" alt="avatar3">
+        <img class="avatar-option" data-url="https://api.dicebear.com/6.x/adventurer/png?seed=cat1&size=128" src="https://api.dicebear.com/6.x/adventurer/png?seed=cat1&size=64" alt="avatar4">
+        <img class="avatar-option" data-url="https://api.dicebear.com/6.x/adventurer/png?seed=robot1&size=128" src="https://api.dicebear.com/6.x/adventurer/png?seed=robot1&size=64" alt="avatar5">
+      </div>
+      <input type="file" id="profile-photo" accept="image/*">
+      <input type="text" id="profile-phone" placeholder="📱 رقم المحمول">
+      <input type="date" id="profile-birth">
+      <div class="row">
+        <button onclick="saveProfile()">💾 حفظ التعديلات</button>
+        <button onclick="backToHome()">↩️ رجوع</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- شاشة الأسئلة -->
+  <div id="quiz-screen" class="screen hidden">
+    <div class="row-between">
+      <div id="timer">⏳ 00:00</div>
+      <div id="score-counter">النقاط: 0</div>
+    </div>
+    <h2 id="question-text"></h2>
+    <div id="options" class="options-grid"></div>
+  </div>
+
+  <!-- شاشة النتيجة -->
+  <div id="result-screen" class="screen hidden">
+    <h2>🎯 نتيجتك 🎯</h2>
+    <p id="score-text"></p>
+    <p id="badge" class="badge"></p>
+    <div id="review"></div>
+    <button onclick="backToHome()">🏠 الصفحة الرئيسية</button>
+  </div>
+
+  <!-------------------------- شاشة النتائج السابقة ------------------------------->
+  <div id="my-results-screen" class="screen hidden">
+    <h2>📊 نتائجي</h2>
+    <table id="myResultsTable">
+      <thead>
+        <tr>
+          <th>📅 التاريخ</th>
+          <th>🏆 الدرجة</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button onclick="backToHome()">↩️ رجوع</button>
+  </div>
+  <!-------------------------- شاشة المتجر ------------------------------->
+
+  <div id="user-shop-screen" class="screen hidden">
+    <h2>🛒 متجر الأفاتارات</h2>
+    <div id="user-shop-items" class="shop-items"></div>
+    <button onclick="backToHome()">⬅️ رجوع</button>
+  </div>
+
+  <!-- أصوات -->
+  <audio id="correctSound" src="https://www.soundjay.com/human/applause-8.mp3"></audio>
+  <audio id="wrongSound" src="https://www.soundjay.com/human/fart-squeak-01.mp3"></audio>
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- شاشة Sub Admin -->
+  <div id="subadmin-home" class="screen hidden">
+    <h1> <span id="subadmin-stage"></span></h1>
+
+    <section id="subadmin-controls">
+      <h3>إعدادات المرحلة</h3>
+      <label>محاولات يومية لكل مستخدم:
+        <input id="cfg-attempts" type="number" min="0" value="0">
+      </label>
+      <label>وقت بداية الاختبار:
+        <input id="cfg-start" type="datetime-local">
+      </label>
+      <label>وقت نهاية الاختبار:
+        <input id="cfg-end" type="datetime-local">
+      </label>
+      <label>وقت المؤقت (بالثواني) - Override:
+        <input id="cfg-timer" type="number" min="0" placeholder="اترك فارغ لو لا تغيير">
+      </label>
+      <button onclick="saveStageConfig()">💾 حفظ إعدادات المرحلة</button>
+    </section>
+
+    <hr>
+
+    <section id="subadmin-upload">
+      <h3>رفع ملف أسئلة (json / txt / docx / pdf)</h3>
+      <input id="questions-file" type="file" accept=".json,.txt,.docx,.pdf">
+      <button onclick="uploadQuestions()">رفع ومعالجة</button>
+      <div id="upload-log" style="margin-top:8px;color:#333;"></div>
+    </section>
+
+    <hr>
+
+    <section id="subadmin-users" style="margin-top:16px;"></section>
+
+    <hr>
+
+    <section id="subadmin-results" style="margin-top:16px;"></section>
+
+    <button onclick="logout()">⬅️ رجوع</button>
+  </div>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- ==================== ADMIN HOME ==================== -->
+  <div id="admin-home" class="screen hidden">
+    <h2 class="admin-title">لوحة تحكم المشرف العام</h2>
+
+    <div class="panel admin-buttons">
+      <button onclick="showAdminSection('manage-subadmins')">👨‍💼 إدارة المشرفين الفرعيين</button>
+      <button onclick="showAdminSection('manage-stages')">📚 إدارة المراحل والاختبارات</button>
+      <button onclick="showAdminSection('manage-users')">👥 إدارة المستخدمين</button>
+      <button onclick="showAdminSection('manage-shop')">🛒 المتجر</button>
+      <button onclick="logout()">🚪 تسجيل الخروج</button>
+    </div>
+
+    <!-- أقسام قابلة للتبديل -->
+    <div id="admin-sections">
+      <!-- ======= Manage Subadmins (Admin) ======= -->
+      <div id="manage-subadmins" class="admin-section hidden">
+        <h3>👥 إدارة المشرفين الفرعيين</h3>
+        <div id="subadmins-list">تحميل...</div>
+
+        <div id="subadmin-form-wrap">
+          <h4>➕ إنشاء / تعديل مشرف فرعى</h4>
+          <input id="sub-name" placeholder="اسم المستخدم (مثال: sub1)" />
+          <input id="sub-pass" placeholder="كلمة السر" />
+          <select id="sub-stage">
+            <option value="">-- اختر المرحلة --</option>
+            <option value="مرحلة اولى وتانية">مرحلة اولى وتانية</option>
+            <option value="مرحلة ثالثة ورابعة">مرحلة ثالثة ورابعة</option>
+            <option value="مرحلة خامسة وسادسة">مرحلة خامسة وسادسة</option>
+            <option value="مرحلة إعدادى وثانوى">مرحلة إعدادى وثانوى</option>
+            <option value="مرحلة الراعى الصالح">مرحلة الراعى الصالح</option>
+          </select>
+          <div style="margin-top:8px;">
+            <button onclick="createSubadmin()">حفظ مشرف جديد</button>
+            <button onclick="clearSubadminForm()">مسح الحقول</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="manage-stages" class="admin-section hidden">
+        <h3>📚 إدارة المراحل</h3>
+        <div id="admin-stage-list"></div>
+        <div id="admin-stage-users" class="hidden panel">
+          <h4 id="stage-users-title"></h4>
+          <table>
+            <thead>
+              <tr>
+                <th>👤 الاسم</th>
+                <th>📱 التليفون</th>
+                <th>🏆 أعلى نتيجة</th>
+              </tr>
+            </thead>
+            <tbody id="stage-users-table"></tbody>
+          </table>
+          <button onclick="hideStageUsers()">⬅️ رجوع</button>
+        </div>
+      </div>
+
+      <div id="manage-users" class="admin-section hidden">
+        <h3>👥 إدارة المستخدمين</h3>
+        <!-- إدارة مرحلة (Admin يحذف/يعدل إعدادات المشرف الفرعى بنفس BIN) -->
+        <div id="admin-manage-stage" class="panel">
+          <h3>⚙️ إدارة إعدادات المرحلة (Admin)</h3>
+
+          <label>اختر المرحلة:</label>
+          <select id="admin-stage-picker" onchange="onAdminStagePicked()">
+            <option value="">-- اختر المرحلة --</option>
+            <!-- سيتم ملؤها ديناميكياً بواسطة fillAdminStagePicker() -->
+          </select>
+
+          <div id="admin-stage-settings" class="hidden" style="margin-top:12px;">
+            <label>محاولات يومية لكل مستخدم (0 = غير محدود):</label>
+            <input id="admin-max-attempts" type="number" min="0" value="0" style="width:140px">
+
+            <label>وقت المؤقت (بالثواني) — اترك فارغاً لاستخدام الافتراضي:</label>
+            <input id="admin-timer" type="number" min="0" placeholder="مثال: 300">
+
+            <label>وقت بداية الاختبار:</label>
+            <input id="admin-start-time" type="datetime-local">
+
+            <label>وقت نهاية الاختبار:</label>
+            <input id="admin-end-time" type="datetime-local">
+
+            <div style="margin-top:10px;">
+              <button onclick="saveStageSettingsForAdmin()">💾 حفظ إعدادات</button>
+              <button onclick="clearAdminStageSettings()">مسح الحقول</button>
+            </div>
+
+            <hr>
+
+            <h4>📂 رفع ملف أسئلة (يُخزن في بن المرحلة)</h4>
+            <input id="admin-questions-file" type="file" accept=".json,.txt,.pdf,.docx">
+            <div style="margin-top:6px;">
+              <button onclick="uploadQuestionsForAdmin()">⬆️ رفع (يتم الإضافة)</button>
+              <button onclick="replaceQuestionsForAdmin()">🔁 استبدال الأسئلة بالملف</button>
+            </div>
+            <div id="admin-upload-log" style="margin-top:8px;color:#333"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="manage-shop" class="admin-section hidden">
+        <h3>🛒 إدارة المتجر</h3>
+
+        <div class="panel">
+          <h4>➕ إضافة أفاتار جديد</h4>
+          <input id="avatar-url" placeholder="ضع رابط صورة الأفاتار" />
+          <input id="avatar-price" type="number" placeholder="سعر الأفاتار" />
+          <button onclick="addAvatar()">حفظ</button>
+        </div>
+
+        <h4>📋 قائمة الأفاتارات</h4>
+        <div id="avatar-list"></div>
+      </div>
+
+    </div>
+
+    <div id="admin-competitions" class="admin-section hidden">
+      <h3>🏆 مسابقات المشرف العام</h3>
+      <p>هنا هنخلي الأدمِن يضيف اختبار مخصص (لاحقًا).</p>
+    </div>
+  </div>
+  </div>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <script src="script.js"></script>
+</body>
+
+</html>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>
