@@ -1116,11 +1116,10 @@ async function uploadQuestions() {
     if (!meta || !meta.questions)
       return alert("المرحلة غير معرفة أو لا تحتوي على Bin للأسئلة");
 
-    const existing = await fetchBin(meta.questions);
-    // اختر: append أو replace — هنا سنعمل append
-    const merged = existing.concat(questions);
-    await saveBin(meta.questions, merged);
-    log.innerText = `✅ تم إضافة ${questions.length} سؤالاً إلى مرحلتك`;
+   // استبدال الأسئلة القديمة بالجديدة (replace)
+await saveBin(meta.questions, questions);
+log.innerText = `✅ تم استبدال الأسئلة بالكامل (${questions.length} سؤالاً) لمرحلتك`;
+
   } catch (e) {
     trapError("uploadQuestions", e);
     log.innerText = "❌ حدث خطأ أثناء المعالجة: " + (e.message || e);
