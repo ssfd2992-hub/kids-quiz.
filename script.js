@@ -565,7 +565,7 @@ function chooseOption(chosenIdx, btnEl, correctIdx) {
     score++;
 
     // ✅ أضف الكود ده عشان تزود الكوينز
-    currentUserData.coins = (currentUserData.coins || 0) + 5;
+    currentUserData.coins = (currentUserData.coins || 0) + 1;
     updateSidebar();
   } else {
     btnEl.classList.add("wrong");
