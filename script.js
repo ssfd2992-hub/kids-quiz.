@@ -689,9 +689,9 @@ function clearQuizState() {
 }
 /*========================================================================*/
 async function updateUserMedals(finalScore, total) {
-  let medal = "bronze";
-  if (finalScore >= total * 0.8) medal = "gold";
-  else if (finalScore >= total * 0.5) medal = "silver";
+  if( finalScore>=total * 0.85) medal = "bronze";
+  else if (finalScore >= total * 0.95) medal = "gold";
+  else if (finalScore >= total * 0.9) medal = "silver";
 
   const arr = await fetchBin(USERDATA_BIN_ID);
   const idx = arr.findIndex((d) => d.username === currentUser.username);
