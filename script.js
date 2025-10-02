@@ -648,9 +648,9 @@ function showResult(finalScore, total) {
     "score-text"
   ).innerText = `درجتك: ${finalScore} من ${total}`;
 
-  let badge = "🥉 برونزية";
-  if (finalScore >= total * 0.8) badge = "🥇 ذهبية";
-  else if (finalScore >= total * 0.5) badge = "🥈 فضية";
+  if( finalScore>=total * 0.85) badge = "🥉 مدلية برونزية ";
+  else if (finalScore >= total * 0.95) badge = "🥇 مدلية ذهبية";
+  else if (finalScore >= total * 0.9) badge = "🥈 مدلية فضية";
   document.getElementById("badge").innerText = badge;
 
   const wrongDiv = document.getElementById("review");
