@@ -1730,3 +1730,58 @@ async function updateCoinsDisplay() {
     console.error("updateCoinsDisplay error:", e);
   }
 }
+
+async function addQuestionsForSubadmin() {
+  const fileInput = document.getElementById("questions-file");
+  if (!fileInput.files.length) return alert("من فضلك اختر ملف الأسئلة");
+  const file = fileInput.files[0];
+  const ext = file.name.split(".").pop().toLowerCase();
+
+  let newQuestions = [];
+  if (ext === "json") {
+    const text = await file.text();
+    newQuestions = JSON.parse(text);
+  } else if (ext === "txt") {
+    const text = await file.text();
+    newQuestions = text.split("\n").filter(Boolean).map(q => ({ text: q, options: [], answer: 0 }));
+  } else {
+    return alert("صيغة الملف غير مدعومة حاليًا للمشرف الفرعي");
+  }
+
+  const stageName = currentUser?.stage;
+  if (!stageName) return alert("مرحلتك غير محددة");
+
+  const meta = STAGES[stageName];
+  const existing = await fetchBin(meta.questions);
+  const merged = existing.concat(newQuestions);
+  await saveBin(meta.questions, merged);
+
+  document.getElementById("upload-log").innerText = `✅ تم إضافة ${newQuestions.length} سؤال بنجاح`;
+}
+
+async function replaceQuestionsForSubadmin() {
+  const fileInput = document.getElementById("questions-file");
+  if (!fileInput.files.length) return alert("من فضلك اختر ملف الأسئلة");
+  const file = fileInput.files[0];
+  const ext = file.name.split(".").pop().toLowerCase();
+
+  let newQuestions = [];
+  if (ext === "json") {
+    const text = await file.text();
+    newQuestions = JSON.parse(text);
+  } else if (ext === "txt") {
+    const text = await file.text();
+    newQuestions = text.split("\n").filter(Boolean).map(q => ({ text: q, options: [], answer: 0 }));
+  } else {
+    return alert("صيغة الملف غير مدعومة حاليًا للمشرف الفرعي");
+  }
+
+  const stageName = currentUser?.stage;
+  if (!stageName) return alert("مرحلتك غير محددة");
+
+  const meta = STAGES[stageName];
+  await saveBin(meta.questions, newQuestions);
+
+  document.getElementById("upload-log").innerText = `✅ تم استبدال الأسئلة بالكامل (${newQuestions.length} سؤال)`;
+}
+
