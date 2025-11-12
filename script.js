@@ -1,25 +1,25 @@
 /* ================== script.js (موسع بالإضافات المطلوبة) ================== */
 
 /* ================== إعدادات - غيّر القيم هنا قبل التشغيل ================== */
-const USERS_BIN_ID = "68d9751a43b1c97be9533ff7"; // bin لتخزين حسابات الدخول: {username,password,role,stage}
-const USERDATA_BIN_ID = "68d97a9bd0ea881f408e3674"; // bin لتخزين بيانات شخصية: {username,phone,birthdate,photo}
-const USERRESULTS_BIN_ID = "68d9896bae596e708fff0a10";
+const USERS_BIN_ID = "69146bd5ae596e708f5462f9"; // bin لتخزين حسابات الدخول: {username,password,role,stage}
+const USERDATA_BIN_ID = "69146cc0d0ea881f40e3a87c"; // bin لتخزين بيانات شخصية: {username,phone,birthdate,photo}
+const USERRESULTS_BIN_ID = "69146ceeae596e708f5464d9";
 // ======= جديد لا تنس تغيّره بـ Bin ID بتاعك =======
-const ADMIN_CONFIG_BIN_ID = "68daf5aad0ea881f408f9ae3";
+const ADMIN_CONFIG_BIN_ID = "69146d0dd0ea881f40e3a906";
 // استبدل ده بالـ Bin ID بتاع المتجر
-const SHOP_BIN_ID = "68dd220dae596e708f02670c";
+const SHOP_BIN_ID = "69146d31ae596e708f54653f";
 
 // bin لتخزين نتائج كل المستخدمين
-const API_KEY = "$2a$10$wTX4NeG7hamsQFvPqAi37ukVtUMqnK.yKu9lCAlWXjENFkEvMsPwe";
+const API_KEY = "$2a$10$aCR.GMsTnN1idxyhEVATjOcvkiLiRAgjI0cYLrPqerdggJPJLjqF.";
 /* ===================================================================== */
 
 /* ---------- البيانات والحالة ---------- */
 const STAGES = {
-  "مرحلة اولى وتانية": { questions: "68d8c7d843b1c97be9528b6c", timer: 300 },
-  "مرحلة ثالثة ورابعة": { questions: "68d988b4ae596e708fff09a1", timer: 600 },
-  "مرحلة خامسة وسادسة": { questions: "68d988d343b1c97be9535046", timer: 900 },
-  "مرحلة إعدادى وثانوى": { questions: "68d988f9d0ea881f408e41af", timer: 1200 },
-  "مرحلة الراعى الصالح": { questions: "68d98912ae596e708fff09dc", timer: 600 }
+  "مرحلة اولى وتانية": { questions: "69146d5943b1c97be9a8b2c9", timer: 300 },
+  "مرحلة ثالثة ورابعة": { questions: "69146d69ae596e708f546598", timer: 600 },
+  "مرحلة خامسة وسادسة": { questions: "69146d7bd0ea881f40e3a9b5", timer: 900 },
+  "مرحلة إعدادى وثانوى": { questions: "69146da1ae596e708f5465ef", timer: 1200 },
+  "مرحلة الراعى الصالح": { questions: "69146dc143b1c97be9a8b380", timer: 600 }
 };
 
 let currentUser = null;
