@@ -15,11 +15,11 @@ const API_KEY = "$2a$10$aCR.GMsTnN1idxyhEVATjOcvkiLiRAgjI0cYLrPqerdggJPJLjqF.";
 
 /* ---------- البيانات والحالة ---------- */
 const STAGES = {
-  "مرحلة اولى وتانية": { questions: "69146d5943b1c97be9a8b2c9" },
-  "مرحلة ثالثة ورابعة": { questions: "69146d69ae596e708f546598" },
-  "مرحلة خامسة وسادسة": { questions: "69146d7bd0ea881f40e3a9b5" },
-  "مرحلة إعدادى وثانوى": { questions: "69146da1ae596e708f5465ef" },
-  "مرحلة الراعى الصالح": { questions: "69146dc143b1c97be9a8b380"}
+  "مرحلة اولى وتانية": { questions: "69146d5943b1c97be9a8b2c9", timer:200 },
+  "مرحلة ثالثة ورابعة": { questions: "69146d69ae596e708f546598", timer:200 },
+  "مرحلة خامسة وسادسة": { questions: "69146d7bd0ea881f40e3a9b5", timer:200 },
+  "مرحلة إعدادى وثانوى": { questions: "69146da1ae596e708f5465ef", timer:200 },
+  "مرحلة الراعى الصالح": { questions: "69146dc143b1c97be9a8b380", timer:200}
 };
 
 let currentUser = null;
