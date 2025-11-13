@@ -8,6 +8,7 @@ const USERRESULTS_BIN_ID = "69146ceeae596e708f5464d9";
 const ADMIN_CONFIG_BIN_ID = "69146d0dd0ea881f40e3a906";
 // استبدل ده بالـ Bin ID بتاع المتجر
 const SHOP_BIN_ID = "69146d31ae596e708f54653f";
+const USERDATA_BIN_ID = "69146cc0d0ea881f40e3a87c"; // bin لتخزين بيانات شخصية: {username,phone,birthdate,photo}
 
 // bin لتخزين نتائج كل المستخدمين
 const API_KEY = "$2a$10$aCR.GMsTnN1idxyhEVATjOcvkiLiRAgjI0cYLrPqerdggJPJLjqF.";
