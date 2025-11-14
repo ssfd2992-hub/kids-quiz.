@@ -56,7 +56,17 @@ function trapError(tag, err) {
 /* ---------- إخفاء / إظهار الشاشات + animation helper ---------- */
 function hideAllScreens() {
   document
-
+    .querySelectorAll(".screen")
+    .forEach((s) => s.classList.add("hidden"));
+}
+function animateElementOnce(el, className = "animate-in") {
+  if (!el) return;
+  el.classList.remove(className);
+  // force reflow
+  void el.offsetWidth;
+  el.classList.add(className);
+  function cleanup() {
+    el.removeEventListener("animationend", cleanup);
     // keep class or remove for reuse? نتركها لكن يمكن إزالتها إذا أردت:
     el.classList.remove(className);
   }
