@@ -353,30 +353,88 @@ function openProfile() {
 }
 
 /* save profile edits (avatar or upload) */
+/* save profile edits (avatar or upload) + optional password change */
 async function saveProfile() {
-  const newPhone = document.getElementById("profile-phone").value.trim();
-  const newBirth = document.getElementById("profile-birth").value;
-  const newPhotoFile = document.getElementById("profile-photo").files[0];
-  const pwrap = document.getElementById("profile-avatar-picker");
-  const chosenAvatar =
-    pwrap && pwrap.dataset && pwrap.dataset.selected
-      ? pwrap.dataset.selected
-      : "";
+  try {
+    const newPhone = document.getElementById("profile-phone").value.trim();
+    const newBirth = document.getElementById("profile-birth").value;
+    const newPhotoFile = document.getElementById("profile-photo").files[0];
+    const pwrap = document.getElementById("profile-avatar-picker");
+    const chosenAvatar =
+      pwrap && pwrap.dataset && pwrap.dataset.selected
+        ? pwrap.dataset.selected
+        : "";
 
-  let photoData = currentUserData.photo || "";
+    // Password fields (may be empty if user doesn't want to change)
+    const oldPassEl = document.getElementById("old-pass");
+    const newPassEl = document.getElementById("new-pass");
+    const confirmPassEl = document.getElementById("confirm-pass");
 
-  if (newPhotoFile) {
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      photoData = e.target.result;
-      await updateUserData(newPhone, newBirth, photoData);
+    const oldPass = oldPassEl ? oldPassEl.value.trim() : "";
+    const newPass = newPassEl ? newPassEl.value.trim() : "";
+    const confirmPass = confirmPassEl ? confirmPassEl.value.trim() : "";
+
+    const wantsPassChange = Boolean(oldPass || newPass || confirmPass);
+
+    // If user requested a password change -> validate inputs
+    if (wantsPassChange) {
+      if (!oldPass || !newPass || !confirmPass)
+        return alert("من فضلك املأ حقول تغيير كلمة السر بالكامل.");
+      if (newPass.length < 4)
+        return alert("كلمة السر الجديدة قصيرة؛ استخدم 4 أحرف على الأقل.");
+      if (newPass !== confirmPass)
+        return alert("كلمتا السر الجديدة غير متطابقتين.");
+      // verify current password matches in-memory user (set at login)
+      if (!currentUser || currentUser.password !== oldPass)
+        return alert("كلمة السر الحالية غير صحيحة.");
+    }
+
+    // prepare photo data (will be updated below)
+    let photoData = currentUserData.photo || "";
+
+    // Helper to clear password inputs after success
+    const clearPasswordInputs = () => {
+      if (oldPassEl) oldPassEl.value = "";
+      if (newPassEl) newPassEl.value = "";
+      if (confirmPassEl) confirmPassEl.value = "";
     };
-    reader.readAsDataURL(newPhotoFile);
-  } else if (chosenAvatar) {
-    photoData = chosenAvatar;
+
+    // Branch 1: User uploaded a new photo file -> read it first
+    if (newPhotoFile) {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          photoData = e.target.result;
+          // 1) update password first (so both bins updated before success alert/navigation)
+          if (wantsPassChange) await changeUserPassword(newPass);
+          // 2) update user data (photo/phone/birth) -> this will save USERDATA_BIN_ID and call backToHome()
+          await updateUserData(newPhone, newBirth, photoData);
+          clearPasswordInputs();
+        } catch (err) {
+          trapError("saveProfile_reader", err);
+          alert("حدث خطأ أثناء حفظ الملف الشخصي");
+        }
+      };
+      reader.readAsDataURL(newPhotoFile);
+      return; // reader will continue asynchronously
+    }
+
+    // Branch 2: chosen avatar (no file)
+    if (chosenAvatar) {
+      photoData = chosenAvatar;
+      if (wantsPassChange) await changeUserPassword(newPass);
+      await updateUserData(newPhone, newBirth, photoData);
+      clearPasswordInputs();
+      return;
+    }
+
+    // Branch 3: no new photo -> just update data (and password if requested)
+    if (wantsPassChange) await changeUserPassword(newPass);
     await updateUserData(newPhone, newBirth, photoData);
-  } else {
-    await updateUserData(newPhone, newBirth, photoData);
+    clearPasswordInputs();
+  } catch (e) {
+    trapError("saveProfile", e);
+    alert("❌ حدث خطأ أثناء حفظ التعديلات");
   }
 }
 
@@ -404,6 +462,27 @@ async function updateUserData(phone, birthdate, photo, coins) {
   updateSidebar();
   alert("✅ تم تحديث بيانات حسابك");
   backToHome();
+}
+
+/* ================== تغيير كلمة السر في USERS_BIN_ID ================== */
+async function changeUserPassword(newPass) {
+  try {
+    const users = await fetchBin(USERS_BIN_ID);
+    const idx = users.findIndex((u) => u.username === currentUser.username);
+    if (idx >= 0) {
+      users[idx].password = newPass;
+      await saveBin(USERS_BIN_ID, users);
+      // حافظ على النسخة في الذاكرة حتى الجلسة الجارية
+      currentUser.password = newPass;
+      trapLog("password_changed", currentUser.username);
+    } else {
+      throw new Error("المستخدم غير موجود في بن المستخدمين");
+    }
+  } catch (e) {
+    trapError("changeUserPassword", e);
+    alert("❌ حدث خطأ أثناء تغيير كلمة السر");
+    throw e; // أعيد الخطأ ليتعامل المستدعي معه
+  }
 }
 
 /* ================== تحميل معلومات المرحلة قبل البدء ================== */
