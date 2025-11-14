@@ -1784,4 +1784,3 @@ async function replaceQuestionsForSubadmin() {
 
   document.getElementById("upload-log").innerText = `✅ تم استبدال الأسئلة بالكامل (${newQuestions.length} سؤال)`;
 }
-
