@@ -1,25 +1,25 @@
 /* ================== script.js (موسع بالإضافات المطلوبة) ================== */
 
 /* ================== إعدادات - غيّر القيم هنا قبل التشغيل ================== */
-const USERS_BIN_ID = "68d9751a43b1c97be9533ff7"; // bin لتخزين حسابات الدخول: {username,password,role,stage}
-const USERDATA_BIN_ID = "68d97a9bd0ea881f408e3674"; // bin لتخزين بيانات شخصية: {username,phone,birthdate,photo}
-const USERRESULTS_BIN_ID = "68d9896bae596e708fff0a10";
+const USERS_BIN_ID = "69146bd5ae596e708f5462f9"; // bin لتخزين حسابات الدخول: {username,password,role,stage}
+const USERDATA_BIN_ID = "69146cc0d0ea881f40e3a87c"; // bin لتخزين بيانات شخصية: {username,phone,birthdate,photo}
+const USERRESULTS_BIN_ID = "69146ceeae596e708f5464d9";
 // ======= جديد لا تنس تغيّره بـ Bin ID بتاعك =======
-const ADMIN_CONFIG_BIN_ID = "68daf5aad0ea881f408f9ae3";
+const ADMIN_CONFIG_BIN_ID = "69146d0dd0ea881f40e3a906";
 // استبدل ده بالـ Bin ID بتاع المتجر
-const SHOP_BIN_ID = "68dd220dae596e708f02670c";
+const SHOP_BIN_ID = "69146d31ae596e708f54653f";
 
 // bin لتخزين نتائج كل المستخدمين
-const API_KEY = "$2a$10$wTX4NeG7hamsQFvPqAi37ukVtUMqnK.yKu9lCAlWXjENFkEvMsPwe";
+const API_KEY = "$2a$10$aCR.GMsTnN1idxyhEVATjOcvkiLiRAgjI0cYLrPqerdggJPJLjqF.";
 /* ===================================================================== */
 
 /* ---------- البيانات والحالة ---------- */
 const STAGES = {
-  "مرحلة اولى وتانية": { questions: "68d8c7d843b1c97be9528b6c", timer: 300 },
-  "مرحلة ثالثة ورابعة": { questions: "68d988b4ae596e708fff09a1", timer: 600 },
-  "مرحلة خامسة وسادسة": { questions: "68d988d343b1c97be9535046", timer: 900 },
-  "مرحلة إعدادى وثانوى": { questions: "68d988f9d0ea881f408e41af", timer: 1200 },
-  "مرحلة الراعى الصالح": { questions: "68d98912ae596e708fff09dc", timer: 600 }
+  "أولى وتانية": { questions: "69146d5943b1c97be9a8b2c9", timer:200 },
+ "تالتة ورابعة": { questions: "69146d69ae596e708f546598", timer:200 },
+ "خامسة وسادسة": { questions: "69146d7bd0ea881f40e3a9b5", timer:200 },
+  "إعدادى وثانوي": { questions: "69146da1ae596e708f5465ef", timer:200 },
+  "الراعى الصالح": { questions: "69146dc143b1c97be9a8b380", timer:200}
 };
 
 let currentUser = null;
@@ -291,6 +291,19 @@ async function enterUserHome() {
   sidebar.classList.add("slide-in");
 }
 
+function updateSidebar() {
+  const photoEl = document.getElementById("user-photo");
+  const nameEl = document.getElementById("user-name");
+  photoEl.src =
+    currentUserData && currentUserData.photo
+      ? currentUserData.photo
+      : "https://i.postimg.cc/7ZQ7m6k9/default-avatar.png";
+  nameEl.innerText = currentUser.username || "مستخدم";
+  document.getElementById("user-coins").innerText = `💰 ${
+    currentUserData.coins || 0
+  }`;
+}
+
 async function renderBadges() {
   try {
     const medals =
@@ -306,43 +319,6 @@ async function renderBadges() {
 		`;
   } catch (err) {
     trapError("renderBadges", err);
-  }
-}
-// متوافق مع الدوال الموجودة في سكربتك: openProfile, openMyResults, showUserShop, enterUserHome, logout
-function showTab(tab) {
-  // remove active from all top-nav buttons (if موجودين)
-  document
-    .querySelectorAll(".top-nav button")
-    .forEach((btn) => btn.classList.remove("active"));
-
-  // add active to clicked button if exists
-  const btn = document.getElementById("tab-" + tab);
-  if (btn) btn.classList.add("active");
-
-  // navigate using الدوال الموجودة عندك
-  switch (tab) {
-    case "profile":
-      if (typeof openProfile === "function") openProfile();
-      break;
-    case "results":
-      if (typeof openMyResults === "function") openMyResults();
-      break;
-    case "shop":
-      if (typeof showUserShop === "function") showUserShop();
-      break;
-    case "lesson":
-      if (typeof showLesson === "function") showLesson();
-      break;
-    case "leaderboard":
-      if (typeof showLeaderboard === "function") showLeaderboard();
-      break;
-    case "home":
-    default:
-      // عرض الصفحة الرئيسية للمستخدم
-      hideAllScreens();
-      document.getElementById("user-home").classList.remove("hidden");
-      if (typeof enterUserHome === "function") enterUserHome();
-      break;
   }
 }
 
@@ -513,59 +489,30 @@ async function changeUserPassword(newPass) {
 async function loadStageInfo(stageName) {
   trapLog("loadStageInfo", stageName);
   currentStage = stageName;
-  const titleEl = document.getElementById("stage-title");
-  if (titleEl) titleEl.innerText = stageName || "لم يتم تعيين مرحلة";
+  document.getElementById("stage-title").innerText =
+    stageName || "لم يتم تعيين مرحلة";
 
   const meta = STAGES[stageName];
   if (!meta) {
-    const sd = document.getElementById("stage-details");
-    if (sd) sd.innerText = "المرحلة غير معرفة";
-    // reset ui
-    const qEl = document.getElementById("quiz-questions");
-    if (qEl) qEl.innerText = 0;
-    const tEl = document.getElementById("quiz-timer");
-    if (tEl) tEl.innerText = "00:00";
-    refreshStartButtonState(0);
+    document.getElementById("stage-details").innerText = "المرحلة غير معرفة";
     return;
   }
 
-  // جلب الأسئلة (قد يرجع مصفوفة أو كائن)
-  const qsRaw = await fetchBin(meta.questions);
-  let qsCount = 0;
-  if (Array.isArray(qsRaw)) qsCount = qsRaw.length;
-  else if (qsRaw && Array.isArray(qsRaw.questions))
-    qsCount = qsRaw.questions.length;
+  // عدد الأسئلة من bin الخاص بالمرحلة
+  const qs = await fetchBin(meta.questions);
 
-  // get config
+  // جلب إعدادات المشرف الفرعي
   const configs = await fetchBin(ADMIN_CONFIG_BIN_ID);
   const cfg = configs.find((c) => c.stage === stageName) || {};
 
-  // timer override or default
-  const timerSeconds =
-    cfg.timerOverride && Number(cfg.timerOverride) > 0
-      ? Number(cfg.timerOverride)
-      : meta.timer;
+  // لو المشرف محدد وقت override نستخدمه
+  const timerMinutes = cfg.timerOverride
+    ? Math.round(cfg.timerOverride)
+    : Math.round(meta.timer);
 
-  // تحديث عناصر الواجهة
-  const qEl = document.getElementById("quiz-questions");
-  if (qEl) qEl.innerText = qsCount;
-
-  const tEl = document.getElementById("quiz-timer");
-  if (tEl) {
-    const mm = Math.floor(timerSeconds / 60)
-      .toString()
-      .padStart(2, "0");
-    const ss = (timerSeconds % 60).toString().padStart(2, "0");
-    tEl.innerText = `${mm}:${ss}`;
-  }
-
-  const sd = document.getElementById("stage-details");
-  if (sd)
-    sd.innerText = `عدد الأسئلة: ${qsCount} — الوقت: ${timerSeconds} ثانية`;
-
-  // حساب المحاولات المتبقية للمستخدم اليوم و تحديث زر البدء
-  const remaining = await computeRemainingAttempts(stageName);
-  refreshStartButtonState(remaining);
+  document.getElementById(
+    "stage-details"
+  ).innerText = `عدد الأسئلة: ${qs.length} — الوقت: ${timerMinutes} ثانية`;
 }
 
 /* ================== بدء الاختبار ================== */
@@ -698,6 +645,7 @@ function chooseOption(chosenIdx, btnEl, correctIdx) {
 
     // ✅ أضف الكود ده عشان تزود الكوينز
     currentUserData.coins = (currentUserData.coins || 0) + 1;
+    updateSidebar();
   } else {
     btnEl.classList.add("wrong");
     try {
@@ -779,9 +727,9 @@ function showResult(finalScore, total) {
     "score-text"
   ).innerText = `درجتك: ${finalScore} من ${total}`;
 
-  let badge = "🥉 برونزية";
-  if (finalScore >= total * 0.8) badge = "🥇 ذهبية";
-  else if (finalScore >= total * 0.5) badge = "🥈 فضية";
+  if( finalScore>=total * 0.85) badge = "🥉 مدلية برونزية ";
+  else if (finalScore >= total * 0.95) badge = "🥇 مدلية ذهبية";
+  else if (finalScore >= total * 0.9) badge = "🥈 مدلية فضية";
   document.getElementById("badge").innerText = badge;
 
   const wrongDiv = document.getElementById("review");
@@ -820,9 +768,9 @@ function clearQuizState() {
 }
 /*========================================================================*/
 async function updateUserMedals(finalScore, total) {
-  let medal = "bronze";
-  if (finalScore >= total * 0.8) medal = "gold";
-  else if (finalScore >= total * 0.5) medal = "silver";
+  if( finalScore>=total * 0.85) medal = "bronze";
+  else if (finalScore >= total * 0.95) medal = "gold";
+  else if (finalScore >= total * 0.9) medal = "silver";
 
   const arr = await fetchBin(USERDATA_BIN_ID);
   const idx = arr.findIndex((d) => d.username === currentUser.username);
@@ -891,6 +839,10 @@ function backToHome() {
   hideAllScreens();
   document.getElementById("user-home").classList.remove("hidden");
   // animate sidebar
+  const sidebar = document.getElementById("main-sidebar");
+  sidebar.classList.remove("slide-in");
+  void sidebar.offsetWidth;
+  sidebar.classList.add("slide-in");
   if (currentUser && currentUser.stage) loadStageInfo(currentUser.stage);
 
   // ✅ تحديث الميداليات بمجرد الرجوع
@@ -1243,11 +1195,10 @@ async function uploadQuestions() {
     if (!meta || !meta.questions)
       return alert("المرحلة غير معرفة أو لا تحتوي على Bin للأسئلة");
 
-    const existing = await fetchBin(meta.questions);
-    // اختر: append أو replace — هنا سنعمل append
-    const merged = existing.concat(questions);
-    await saveBin(meta.questions, merged);
-    log.innerText = `✅ تم إضافة ${questions.length} سؤالاً إلى مرحلتك`;
+   // استبدال الأسئلة القديمة بالجديدة (replace)
+await saveBin(meta.questions, questions);
+log.innerText = `✅ تم استبدال الأسئلة بالكامل (${questions.length} سؤالاً) لمرحلتك`;
+
   } catch (e) {
     trapError("uploadQuestions", e);
     log.innerText = "❌ حدث خطأ أثناء المعالجة: " + (e.message || e);
@@ -1380,7 +1331,7 @@ async function exportStagePDF() {
 //--------------------------صفحة الادمن----------------
 function enterAdminHome() {
   switchScreen("admin-home");
-  renderAdmins();
+  renderSubadmins();
 }
 function showAdminSection(id) {
   // اخفي كل الأقسام
@@ -1858,223 +1809,57 @@ async function updateCoinsDisplay() {
     console.error("updateCoinsDisplay error:", e);
   }
 }
-/* ------------------ أدوات مودال بسيطة ------------------ */
-function closeModal() {
-  const m = document.getElementById("app-modal");
-  if (m) m.remove();
-}
-function createModal(title, innerHTML) {
-  closeModal();
-  const wrap = document.createElement("div");
-  wrap.id = "app-modal";
-  wrap.style.zIndex = "9999";
-  wrap.innerHTML = `
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 style="margin:0">${title}</h3>
-        <button class="modal-close" onclick="closeModal()">✖</button>
-      </div>
-      <div class="modal-body">${innerHTML}</div>
-    </div>
-  `;
-  document.body.appendChild(wrap);
-  return wrap;
-}
 
-/* escape for input values */
-function escapeHtml(str) {
-  if (!str) return "";
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
+async function addQuestionsForSubadmin() {
+  const fileInput = document.getElementById("questions-file");
+  if (!fileInput.files.length) return alert("من فضلك اختر ملف الأسئلة");
+  const file = fileInput.files[0];
+  const ext = file.name.split(".").pop().toLowerCase();
 
-/* ------------------ showLesson (عرض الدرس للمستخدم) ------------------ */
-async function showLesson() {
-  if (!currentUser || !currentUser.stage) {
-    return alert("لا توجد مرحلة محددة لحسابك");
-  }
-
-  const configs = await fetchBin(ADMIN_CONFIG_BIN_ID);
-  const cfg = configs.find((c) => c.stage === currentUser.stage) || {};
-  const lesson = cfg.lesson || {};
-
-  const title = lesson.title || `درس - ${currentUser.stage}`;
-  const content = lesson.content || "<p>لم يتم إضافة درس لهذه المرحلة بعد.</p>";
-
-  // لو المشرف موجود - نعرض زر تعديل
-  const editBtn =
-    currentUser.role === "subadmin"
-      ? `<div style="margin-top:12px;text-align:left"><button onclick="openLessonEditor()">✏️ تعديل / رفع الدرس</button></div>`
-      : "";
-
-  // لو مفيش درس نضيف زر رجوع واضح
-  const backBtn = !lesson.content
-    ? `<div style="margin-top:12px;text-align:center"><button onclick="closeModal()">↩️ رجوع</button></div>`
-    : "";
-
-  createModal(
-    title,
-    `<div class="lesson-wrap" style="text-align:right;max-height:60vh;overflow:auto">${content}</div>${editBtn}${backBtn}`
-  );
-}
-
-/* ------------------ محرر الدرس (SubAdmin فقط) ------------------ */
-async function openLessonEditor() {
-  if (!currentUser || currentUser.role !== "subadmin")
-    return alert("غير مسموح لك بتحرير الدرس");
-
-  const configs = await fetchBin(ADMIN_CONFIG_BIN_ID);
-  const cfg = configs.find((c) => c.stage === currentUser.stage) || {};
-  const lesson = cfg.lesson || {};
-  const title = lesson.title || "";
-  const content = lesson.content || "";
-
-  const html = `
-    <label style="display:block;margin-bottom:6px">عنوان الدرس</label>
-    <input id="lesson-editor-title" style="width:100%;padding:8px;margin-bottom:10px" value="${escapeHtml(
-      title
-    )}" />
-    <label style="display:block;margin-bottom:6px">محتوى الدرس (HTML مسموح)</label>
-    <textarea id="lesson-editor-content" style="width:100%;height:260px;padding:8px">${escapeHtml(
-      content
-    )}</textarea>
-    <div style="margin-top:10px;text-align:left">
-      <button onclick="saveLessonForStage('${
-        currentUser.stage
-      }')">💾 حفظ الدرس</button>
-      <button onclick="closeModal()">إلغاء</button>
-    </div>
-    <p style="margin-top:8px;color:#666">ملاحظة: يمكنك وضع نص أو HTML بسيط (صور/روابط). المشرف يتحمل مسؤولية المحتوى.</p>
-  `;
-  createModal(`تحرير درس - ${currentUser.stage}`, html);
-}
-
-/* ------------------ حفظ الدرس في ADMIN_CONFIG_BIN_ID ------------------ */
-async function saveLessonForStage(stage) {
-  try {
-    const title = document.getElementById("lesson-editor-title").value.trim();
-    const content = document
-      .getElementById("lesson-editor-content")
-      .value.trim();
-
-    let configs = await fetchBin(ADMIN_CONFIG_BIN_ID);
-    if (!Array.isArray(configs))
-      configs = Array.isArray(configs) ? configs : [];
-
-    const idx = configs.findIndex((c) => c.stage === stage);
-    const entry = idx >= 0 ? configs[idx] : { stage };
-
-    entry.lesson = {
-      title,
-      content,
-      updatedAt: new Date().toISOString()
-    };
-
-    if (idx >= 0) configs[idx] = entry;
-    else configs.push(entry);
-
-    await saveBin(ADMIN_CONFIG_BIN_ID, configs);
-    alert("✅ تم حفظ الدرس بنجاح");
-    closeModal();
-  } catch (e) {
-    trapError("saveLessonForStage", e);
-    alert("❌ حدث خطأ أثناء حفظ الدرس");
-  }
-}
-
-/* ------------------ Leaderboard (مركز المستخدم فقط، بدون أسماء) ------------------ */
-async function showLeaderboard() {
-  if (!currentUser || !currentUser.stage) {
-    return alert("لا توجد مرحلة محددة لحسابك");
-  }
-
-  const users = await fetchBin(USERS_BIN_ID);
-  const results = await fetchBin(USERRESULTS_BIN_ID);
-
-  const stageUsers = (users || []).filter(
-    (u) => u.role === "user" && u.stage === currentUser.stage
-  );
-  if (!stageUsers.length) return alert("لا يوجد مستخدمين في هذه المرحلة");
-
-  // حساب أفضل نسبة لكل مستخدم (score/total)
-  const ranks = stageUsers.map((u) => {
-    const rs = (results || []).filter(
-      (r) => r.username === u.username && r.stage === u.stage
-    );
-    const bestPercent = rs.length
-      ? Math.max(...rs.map((rr) => (rr.total ? rr.score / rr.total : 0)))
-      : 0;
-    return { username: u.username, bestPercent };
-  });
-
-  ranks.sort((a, b) => b.bestPercent - a.bestPercent);
-
-  const myIndex = ranks.findIndex((r) => r.username === currentUser.username);
-  const myRank = myIndex >= 0 ? myIndex + 1 : ranks.length + 1;
-  const total = ranks.length;
-  const myPercent =
-    myIndex >= 0 ? Math.round(ranks[myIndex].bestPercent * 100) : 0;
-
-  // عرض مودال بسيط
-  const html = `
-    <div style="text-align:center">
-      <p style="font-size:20px">🎖️ مركزك في ${currentUser.stage}</p>
-      <p style="font-size:28px;margin:8px 0"><strong>${myRank}</strong> / <strong>${total}</strong></p>
-      <p>أفضل نتيجة لديك: <strong>${myPercent}%</strong></p>
-      <p style="margin-top:8px;color:#666">ملاحظة: الأسماء مخفية حفاظًا على الخصوصية.</p>
-      <div style="margin-top:12px"><button onclick="closeModal()">إغلاق</button></div>
-    </div>
-  `;
-  createModal(`ترتيب المرحلة`, html);
-}
-// احسب عدد محاولات اليوم (ترجع عدد المحاولات المتبقية أو Infinity لو غير محدود)
-async function computeRemainingAttempts(stageName) {
-  try {
-    const configs = await fetchBin(ADMIN_CONFIG_BIN_ID);
-    const cfg = (configs || []).find((c) => c.stage === stageName) || {};
-    const maxAttempts = cfg.attempts ? Number(cfg.attempts) : 0; // 0 => غير محدود في إعداداتنا
-
-    if (!maxAttempts || maxAttempts <= 0) {
-      return Infinity; // غير محدود
-    }
-
-    const allResults = await fetchBin(USERRESULTS_BIN_ID);
-    const todayCount = (allResults || []).filter(
-      (r) =>
-        r.username === currentUser.username &&
-        r.stage === stageName &&
-        new Date(r.date).toDateString() === new Date().toDateString()
-    ).length;
-
-    return Math.max(0, maxAttempts - todayCount);
-  } catch (e) {
-    trapError("computeRemainingAttempts", e);
-    return 0;
-  }
-}
-function refreshStartButtonState(remaining) {
-  const btn = document.getElementById("start-quiz-btn");
-  const attemptsEl = document.getElementById("quiz-attempts");
-  if (!btn || !attemptsEl) return;
-
-  if (remaining === Infinity) {
-    attemptsEl.innerText = "غير محدود";
-    btn.disabled = false;
-    btn.classList.remove("disabled");
-    btn.innerText = "🚀 ابدأ";
+  let newQuestions = [];
+  if (ext === "json") {
+    const text = await file.text();
+    newQuestions = JSON.parse(text);
+  } else if (ext === "txt") {
+    const text = await file.text();
+    newQuestions = text.split("\n").filter(Boolean).map(q => ({ text: q, options: [], answer: 0 }));
   } else {
-    attemptsEl.innerText = String(remaining);
-    if (remaining > 0) {
-      btn.disabled = false;
-      btn.classList.remove("disabled");
-      btn.innerText = "🚀 ابدأ";
-    } else {
-      btn.disabled = true;
-      btn.classList.add("disabled");
-      btn.innerText = "🚫 لا توجد محاولات";
-    }
+    return alert("صيغة الملف غير مدعومة حاليًا للمشرف الفرعي");
   }
+
+  const stageName = currentUser?.stage;
+  if (!stageName) return alert("مرحلتك غير محددة");
+
+  const meta = STAGES[stageName];
+  const existing = await fetchBin(meta.questions);
+  const merged = existing.concat(newQuestions);
+  await saveBin(meta.questions, merged);
+
+  document.getElementById("upload-log").innerText = `✅ تم إضافة ${newQuestions.length} سؤال بنجاح`;
+}
+
+async function replaceQuestionsForSubadmin() {
+  const fileInput = document.getElementById("questions-file");
+  if (!fileInput.files.length) return alert("من فضلك اختر ملف الأسئلة");
+  const file = fileInput.files[0];
+  const ext = file.name.split(".").pop().toLowerCase();
+
+  let newQuestions = [];
+  if (ext === "json") {
+    const text = await file.text();
+    newQuestions = JSON.parse(text);
+  } else if (ext === "txt") {
+    const text = await file.text();
+    newQuestions = text.split("\n").filter(Boolean).map(q => ({ text: q, options: [], answer: 0 }));
+  } else {
+    return alert("صيغة الملف غير مدعومة حاليًا للمشرف الفرعي");
+  }
+
+  const stageName = currentUser?.stage;
+  if (!stageName) return alert("مرحلتك غير محددة");
+
+  const meta = STAGES[stageName];
+  await saveBin(meta.questions, newQuestions);
+
+  document.getElementById("upload-log").innerText = `✅ تم استبدال الأسئلة بالكامل (${newQuestions.length} سؤال)`;
 }
