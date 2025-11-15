@@ -610,6 +610,8 @@ function renderQuestion() {
     return;
   }
   const q = questions[currentQuestionIndex];
+	document.getElementById("question-text").classList.add("coptic-text");
+
   document.getElementById("question-text").innerText = `${
     currentQuestionIndex + 1
   }. ${q.text}`;
@@ -617,6 +619,8 @@ function renderQuestion() {
   optsWrap.innerHTML = "";
   q.options.forEach((opt, idx) => {
     const btn = document.createElement("button");
+	      btn.classList.add("coptic-text");
+
     btn.innerText = opt;
     btn.onclick = () => chooseOption(idx, btn, q.answer);
     optsWrap.appendChild(btn);
@@ -748,6 +752,8 @@ function showResult(finalScore, total) {
         }</p>
         <p><strong>الإجابة الصحيحة:</strong> ${w.options[w.correct]}</p>
       `;
+		block.classList.add("coptic-text");
+
       wrongDiv.appendChild(block);
     });
   }
