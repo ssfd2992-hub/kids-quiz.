@@ -5,7 +5,7 @@ const USERS_BIN_ID = "69146bd5ae596e708f5462f9"; // bin لتخزين حسابا�
 const USERDATA_BIN_ID = "69146cc0d0ea881f40e3a87c"; // bin لتخزين بيانات شخصية: {username,phone,birthdate,photo}
 const USERRESULTS_BIN_ID = "69146ceeae596e708f5464d9";
 // ======= جديد لا تنس تغيّره بـ Bin ID بتاعك =======
-const ADMIN_CONFIG_BIN_ID = "69146d0dd0ea881f40e3a906";
+const ADMIN_CONFIG_BIN_ID = "691b9cc7d0ea881f40eef02c";
 // استبدل ده بالـ Bin ID بتاع المتجر
 const SHOP_BIN_ID = "69146d31ae596e708f54653f";
 
